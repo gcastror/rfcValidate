@@ -1,7 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { CTable, CTableCaption, CTableHead, CTableRow, CTableHeaderCell } from '@coreui/vue';
+import { CTable, CTableCaption, CTableHead, CTableRow, CTableHeaderCell, CTableDataCell } from '@coreui/vue';
 
+const ACTIVO = "Activo"
+const INACTIVO = "Inactivo"
 const props = defineProps({
   data: Array,
   columns: Array,
@@ -34,10 +36,10 @@ const filteredData = computed(() => {
   }
 
   data.map((item) => {
-    item.Status = item.Status ? "Activo" : 'Inactivo';
+    item.StatusString = item.Status ? ACTIVO : INACTIVO;
     item.Empresa = item.Empresa.toUpperCase();
     item.Id = parseInt(item.Id)
-    return item;
+    return { ...item };
   })
 
   return data
@@ -57,12 +59,7 @@ function capitalize(str) {
 </script>
 
 <template>
-  <CIcon icon="cil-toggle-on" class="flex-shrink-0 me-2" width="24" height="24" />
-  <CIcon icon="cil-toggle-off" class="flex-shrink-0 me-2" width="24" height="24" />
-  <!-- :items="filteredData" -->
-
-  <CTable v-if="filteredData.length" :items="filteredData" caption="top" color="light" :tableHeadProps="{ color: 'dark' }"
-    striped hover>
+  <CTable v-if="filteredData.length" caption="top" color="light" :tableHeadProps="{ color: 'dark' }" striped hover>
     <CTableHead color="dark">
       <CTableRow>
         <CTableHeaderCell v-for="  key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
@@ -70,11 +67,18 @@ function capitalize(str) {
           <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
           </span>
         </CTableHeaderCell>
-
-
-
       </CTableRow>
     </CTableHead>
+    <CTableRow v-for="entry in filteredData">
+      <CTableDataCell v-for="key in columns">
+        <CIcon v-if="key === 'Status' && entry[key] == true" icon="cil-toggle-on" size="sm" style="color:green" />
+        <CIcon v-else-if="key === 'Status' && entry[key] == false" icon="cil-toggle-off" size="sm" style="color:red" />
+
+        <span v-else>{{ entry[key] }}</span>
+
+      </CTableDataCell>
+
+    </CTableRow>
 
     <CTableCaption>Lista de empresas dadas de Alta y con RFC validado</CTableCaption>
   </CTable>
