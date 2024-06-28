@@ -5,12 +5,12 @@ import FindRFC from './components/FindRFC.vue';
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <FindRFC  />
-    </div>
-  </header>
+  <!-- <header> -->
+  <div class="wrapper">
+    <FindRFC />
 
+  </div>
+  <!-- </header> -->
   <!-- <RouterView /> -->
 </template>
 

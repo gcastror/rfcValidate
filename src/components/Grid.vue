@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { CTable, CTableCaption, CTableHead, CTableRow, CTableHeaderCell } from '@coreui/vue';
 
 const props = defineProps({
   data: Array,
@@ -31,6 +32,14 @@ const filteredData = computed(() => {
       return (a === b ? 0 : a > b ? 1 : -1) * order
     })
   }
+
+  data.map((item) => {
+    item.Status = item.Status ? "Activo" : 'Inactivo';
+    item.Empresa = item.Empresa.toUpperCase();
+    item.Id = parseInt(item.Id)
+    return item;
+  })
+
   return data
 })
 
@@ -42,30 +51,58 @@ function sortBy(key) {
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
+
+
 </script>
 
 <template>
-  <table v-if="filteredData.length">
-    <thead>
-      <tr>
-        <th v-for="key in columns"
-          @click="sortBy(key)"
-          :class="{ active: sortKey == key }">
+  <CIcon icon="cil-toggle-on" class="flex-shrink-0 me-2" width="24" height="24" />
+  <CIcon icon="cil-toggle-off" class="flex-shrink-0 me-2" width="24" height="24" />
+  <!-- :items="filteredData" -->
+
+  <CTable v-if="filteredData.length" :items="filteredData" caption="top" color="light" :tableHeadProps="{ color: 'dark' }"
+    striped hover>
+    <CTableHead color="dark">
+      <CTableRow>
+        <CTableHeaderCell v-for="  key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
           {{ capitalize(key) }}
           <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
           </span>
-        </th>
+        </CTableHeaderCell>
+
+
+
+      </CTableRow>
+    </CTableHead>
+
+    <CTableCaption>Lista de empresas dadas de Alta y con RFC validado</CTableCaption>
+  </CTable>
+  <p v-else>No matches found.</p>
+
+
+
+
+
+
+  <!-- <table v-if="filteredData.length">
+    <thead>
+      <tr>
+        <th v-for="key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
+          {{ capitalize(key) }}
+          <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+          </span>
+        </th>v
       </tr>
     </thead>
     <tbody>
       <tr v-for="entry in filteredData">
         <td v-for="key in columns">
-          {{entry[key]}}
+          {{ entry[key] }}
         </td>
       </tr>
     </tbody>
-  </table>
-  <p v-else>No matches found.</p>
+  </table> -->
 </template>
 
 <style>
